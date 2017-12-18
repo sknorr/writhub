@@ -142,7 +142,7 @@ if [[ $1 == '--compose' ]] && [[ "$2" ]]; then
   composestring "$2"
   echo "$configfile" > .gitignore
   git add .gitignore && git commit -m "Add gitignore"
-  echo "Yo. You done good."
+  echo "You done good, son. This\'ll last for "$(cat $configfile | wc -c)" days."
   exit
 fi
 
@@ -169,4 +169,6 @@ if [[ $1 == '--drudgery' ]] && [[ -d "$2" ]]; then
   exit
 fi
 
-echo "You should not be here. Forgot a parameter?"
+echo "You should not be here.  Forgot a parameter?"
+echo "Either set a new string: $0 --compose MESSAGE_STRING"
+echo "Or run daily task:       $0 --drudgery GIT_REPO_DIR"
