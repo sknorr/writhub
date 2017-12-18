@@ -1,0 +1,172 @@
+#!/bin/bash
+#0  a   | b   |  c   | d   |  e   | f | g    | h   | i |j | k   |l | m      |  n    | o   | p   | q  | r  | s  | t | u   |v |  w    | x  | y   | z   | #
+#1        #                #        .##        #     .#  .# #    ##                                                                                    #
+#2        #                #        #          #            #     #                                              #                                     #
+#3  ###.  ####.  .#### .####  .###. ### .###.# ####. .#  .# # .#  #  #.##.##.  #.###  .###. #.##. .### # #. .##. ### #  # #  # #.   # #  # #.  # ####. #
+#4   .##  #   #  #     #   #  # .#  #   #   #  #   #  #   # ##    #   #  #  #   #   # #   #  #  # #  # ##   #.   #   #  # #  #  # . #  #.   #  #   #   #
+#5  #  #  #   #  #     #   #  ##    #   .####  #   #  #   # # #   #   #  #  #   #   # #   #  #  # #  # #      .# #   #  # .# #  # # #  ##.   ###  #  . #
+#6  .##.# ####.  .#### .###.# .###  #       #  #   # ###  # #  #. .#  #  #  #   #   # .###.  ###. .### #    .##. .##  ##.#  #    # #  #   #    # ##### #
+#7                                  #   .###.           .#.                                  #       #                                      .##.       #
+
+level0=0
+level1=1
+level2=7
+level3=14
+level4=21
+configfile="writhub.stringalong"
+spaces="       "
+
+verbs="empathize correct fix regurgitate grill decompose pry_open rescue raise decrease take speak go purge exit disrupt refactor resist instigate componentize cast immanentize flatten summarize segue mix manage mobilize massage cast peek besiege shovel make round_out decentralize revive invigorate snap ask comment break smash kill analyze average_out spin_off separate reset set_up cancel reveal chastise apologize add fuzz shoot divest invest mark burn cook reheat microwave broaden debug funnel overload cut translate calculate chase flip_over chill offset charge"
+conjunctions="and with for by using via through over because_of due_to merge"
+articles="the a 1"
+pronouns="over in around"
+adjectives="awesome horrible terrific scientific fluctuating egotist masterly pressurized whimsical savage mutant minor major little feeble flimsy central random persistent ratchety pointy mechanical open-source helpless persnickety peppered pesky financial fiscal wobbly short wide sharp long transparent never-meant-to-be magical pseudo-random broken duck-typed manual interactive original angsty salted meandering mesmerizing phantasized flamboyant organic fresh correct hyperventilating hallucinated overbroad large"
+nouns="footgun patch jelly kitten party style man Wichita mango dream mezzanine container fire_engine drop ctor dtor function force_field spore spoof peanut PR earthquake eschaton Feng_Shui bird_nest awareness DoS headless_chicken apologist typo message_bus hub validity regression mutex heap humanity Makefile machete null_pointer overlord code_drop signal technobabble Tijuana illuminati apple l10n unit_test ricochet gain Q1_result pinky_finger vernacular better_place world number digit hashtag Ruby_gem package flood_gate stack_overflow buffer_underrun dict int static_typing syntactic_sugar command loop goto responsibility balloon memory_usage birthday_bash ridicule Instagram_pic fear magic_number interrupt flotsam jet_engine idea build_fix QA_tester salt elliptic_curve scooter insomnia override dash_of_cumin report template Apache result stuff scissors fire_ball lightning weather_report tornado protection Demagorgon f-society random_orange issue_reporter stacktrace traceback Visual_Studio_project_file GCC WaE_setting tendency order_of_magnitude felony compatibility"
+
+function echsit() {
+  echo "$1"
+  exit
+}
+
+# --- Get the string to type out
+
+function readfont() {
+  rawfont=$(sed -rn '/#!/{n; p; :loop n; p; /^[ \t]*$/q; b loop}' $0 | sed -r -e 's/^# ?//')
+  index=$(echo -e "$rawfont" | head -1)
+  font=$(echo -e "$rawfont" | tail -7)
+}
+
+function getchar() {
+  # $1 - desiredchar
+  char=$(echo "$1" | cut -b 1 | sed -r 's/[^a-z]//')
+  [[ $char ]] || echsit "I cannot handle unhandled characters. Duh."
+  relevant=$(echo "$index" | sed -r "s/^(0.*${char} *\|).*/\1/")
+  start=$(echo -n "$relevant" | sed -r "s/^(0.*${char}).*/\1/" | wc -c)
+  end=$(echo "$relevant" | wc -c)
+  asciichar=
+  for i in $(seq 1 7); do
+    asciichar+=','$(echo -e "$font" | sed -n "${i} p" | cut -b ${start}-${end})
+  done
+  asciivertical=
+  # $end - $start and cut instead maybe? then i could also leave away the stupid
+  # commas
+  while [[ $(echo "$asciichar" | sed 's/,//g') ]]; do
+    asciivertical+=$(echo "$asciichar" | sed -r -e 's/,([^,])[^,]*/\1/g')
+    asciichar=$(echo "$asciichar" | sed -r -e 's/(,)[^,]([^,]*)/\1\2/g')
+  done
+  echo "$asciivertical"
+}
+
+function composestring() {
+  # $1 string to ASCIIize
+  textstring=
+  input="$1"
+  while [[ "$input" ]]; do
+    this=$(echo "$input" | cut -b 1)
+    if [[ "$this" == ' ' ]]; then
+      textstring+="$spaces$spaces$spaces"
+    else
+      textstring+="$(getchar $this)$spaces"
+    fi
+    input=$(echo "$input" | cut -b 2-)
+  done
+  echo "$textstring" >> "$configfile"
+}
+
+#--- Git functionality
+
+function getword() {
+  #$1 words to pick from, space-separated
+  words=$(echo -e "$1" | sed 's/ /\n/g')
+  listlength=$(echo -e "$words" | wc -l)
+  rando=$(($RANDOM % ($listlength)))
+  echo "$words" | sed -n "$((${rando} + 1)) p" | sed 's/_/ /g'
+}
+
+function camelcase() {
+  echo $(getword "$nouns")' '$(getword "$nouns") | sed -r -e 's/^./\U&/' -e 's/ (.)/\U\1/g'
+}
+
+function commitmessage() {
+  commitstyle=$(($RANDOM % 7))
+  addnumber=$(($RANDOM % 6))
+  isrevert=$(($RANDOM % 35))
+  date=$(date +%j)
+  [[ $date -lt 50 ]] && date="50"
+  issue=$(($RANDOM % $date))
+  msg=
+  if [[ $commitstyle -eq 0 ]]; then
+    msg=$(getword "$verbs")" "$(getword "$nouns")
+  elif [[ $commitstyle -eq 1 ]]; then
+    msg=$(getword "$verbs")" "$(getword "$articles")" "$(getword "$adjectives")" "$(getword "$nouns")
+  elif [[ $commitstyle -eq 2 ]]; then
+    msg=$(getword "$verbs")" and "$(getword "$verbs")" "$(getword "$adjectives")" "$(getword "$nouns")
+  elif [[ $commitstyle -eq 3 ]]; then
+    msg=$(getword "$verbs")" "$(getword "$pronouns")" "$(getword "$adjectives")" "$(getword "$nouns")
+  elif [[ $commitstyle -eq 4 ]]; then
+    msg=$(getword "$verbs")" "$(getword "$pronouns")" "$(camelcase)
+  elif [[ $commitstyle -eq 5 ]]; then
+    msg=$(getword "$verbs")" "$(getword "$adjectives")" "$(getword "$nouns")" "$(getword "$conjunctions")" "$(getword "$nouns")
+  elif [[ $commitstyle -eq 6 ]]; then
+    msg="Do stuff"
+  fi
+  number=
+  [[ $addnumber -eq 2 ]] && number=" (fix for #${issue})"
+  [[ $addnumber -eq 3 ]] && number=" (fixes #${issue})"
+  [[ $addnumber -eq 4 ]] && number=" (also fixes #${issue})"
+  [[ $addnumber -eq 5 ]] && number=" (WIP)"
+  if [[ $isrevert -eq 8 ]]; then
+    echo -e "Revert \"$(echo $msg$number | sed -r 's/^./\U&\L/')\"\n\nThis reverts commit $RANDOM$RANDOM$RANDOM$RANDOM"
+  else
+    echo "$msg$number" | sed -r 's/^./\U&\L/'
+  fi
+}
+
+function generatefiles() {
+  touch README.py
+  echo $(getword "$nouns")" "$(getword "$verbs")" "$(getword "$nouns") >> README.py
+  stupid=$(($RANDOM % 35))
+  [[ $stupid -eq 12 ]] && sed -i -r 's/ / :/g' README.py
+  [[ $stupid -eq 22 ]] && sed -i -r 's/i/a/g' README.py
+  [[ $stupid -eq 32 ]] && sed -i -r 's/e/uiuiui/g' README.py
+  git add README.py
+}
+
+function makecommit() {
+  generatefiles
+  git commit -a -m "$(commitmessage)"
+}
+
+if [[ $1 == '--compose' ]] && [[ "$2" ]]; then
+  readfont
+  composestring "$2"
+  echo "$configfile" > .gitignore
+  git add .gitignore && git commit -m "Add gitignore"
+  echo "Yo. You done good."
+  exit
+fi
+
+if [[ $1 == '--drudgery' ]] && [[ -d "$2" ]]; then
+  cd $2
+
+  [[ -f "$configfile" ]] || echsit "Use --compose MESSAGE to create a configuration."
+  [[ $(cat "$configfile") ]] || echsit "$configfile is empty. I declare victory."
+  cfg=$(cat "$configfile")
+  todaysbyte=$(echo "$cfg" | cut -b 1)
+  commits=0
+  [[ $todaysbyte = '.' ]] && commits="$level2"
+  [[ $todaysbyte = '#' ]] && commits="$level4"
+  if [[ $commits -eq 0 ]]; then
+    echo "No commits today."
+  else
+    for i in [[ $(seq 1 $commits) ]]; do
+      makecommit
+    done
+    git push
+  fi
+
+  echo "$cfg" | cut -b 2- > "$configfile"
+  exit
+fi
+
+echo "You should not be here. Forgot a parameter?"
