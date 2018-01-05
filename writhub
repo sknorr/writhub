@@ -70,7 +70,7 @@ function composestring() {
     fi
     input=$(echo "$input" | cut -b 2-)
   done
-  echo "$textstring" >> "$configfile"
+  echo "|$textstring" >> "$configfile"
 }
 
 #--- Git functionality
@@ -152,13 +152,16 @@ if [[ $1 == '--drudgery' ]] && [[ -d "$2" ]]; then
   [[ -f "$configfile" ]] || echsit "Use --compose MESSAGE to create a configuration."
   [[ $(cat "$configfile") ]] || echsit "$configfile is empty. I declare victory."
   cfg=$(cat "$configfile")
+  # first commit needs to be made on a Sunday
+  if [[ $(echo "$cfg" | cut -b 1) == '|' ]]; then
+    [[ $(date +%w) == 0 ]] || exit
+    cfg=$(echo "$cfg" | cut -b 2-)
+  fi
   todaysbyte=$(echo "$cfg" | cut -b 1)
   commits=0
   [[ $todaysbyte = '.' ]] && commits="$level2"
   [[ $todaysbyte = '#' ]] && commits="$level4"
-  if [[ $commits -eq 0 ]]; then
-    echo "No commits today."
-  else
+  if [[ ! $commits -eq 0 ]]; then
     for i in [[ $(seq 1 $commits) ]]; do
       makecommit
     done
