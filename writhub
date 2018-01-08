@@ -129,12 +129,12 @@ function generatefiles() {
   [[ $stupid -eq 12 ]] && sed -i -r 's/ / :/g' README.py
   [[ $stupid -eq 22 ]] && sed -i -r 's/i/a/g' README.py
   [[ $stupid -eq 32 ]] && sed -i -r 's/e/uiuiui/g' README.py
-  git add README.py
+  git add README.py >/dev/null 2>/dev/null
 }
 
 function makecommit() {
   generatefiles
-  git commit -a -m "$(commitmessage)"
+  git commit -a -m "$(commitmessage)" >/dev/null 2>/dev/null
 }
 
 if [[ $1 == '--compose' ]] && [[ "$2" ]]; then
@@ -165,7 +165,7 @@ if [[ $1 == '--drudgery' ]] && [[ -d "$2" ]]; then
     for i in [[ $(seq 1 $commits) ]]; do
       makecommit
     done
-    git push
+    git push >/dev/null 2>/dev/null
   fi
 
   echo "$cfg" | cut -b 2- > "$configfile"
