@@ -123,13 +123,13 @@ function commitmessage() {
 }
 
 function generatefiles() {
-  touch README.py
+  touch randy.py
   echo $(getword "$nouns")" "$(getword "$verbs")" "$(getword "$nouns") >> README.py
   stupid=$(($RANDOM % 35))
   [[ $stupid -eq 12 ]] && sed -i -r 's/ / :/g' README.py
   [[ $stupid -eq 22 ]] && sed -i -r 's/i/a/g' README.py
   [[ $stupid -eq 32 ]] && sed -i -r 's/e/uiuiui/g' README.py
-  git add README.py >/dev/null 2>/dev/null
+  git add randy.py >/dev/null 2>/dev/null
 }
 
 function makecommit() {
