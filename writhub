@@ -91,7 +91,7 @@ function commitmessage() {
   commitstyle=$(($RANDOM % 7))
   addnumber=$(($RANDOM % 6))
   isrevert=$(($RANDOM % 35))
-  date=$(date +%j)
+  date=$(date +%j | sed -r 's/^0+//')
   [[ $date -lt 50 ]] && date="50"
   issue=$(($RANDOM % $date))
   msg=
