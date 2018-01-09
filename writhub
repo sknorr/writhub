@@ -123,13 +123,14 @@ function commitmessage() {
 }
 
 function generatefiles() {
-  touch randy.py
-  echo $(getword "$nouns")" "$(getword "$verbs")" "$(getword "$nouns") >> README.py
+  thefile="randy.py"
+  touch $thefile
+  echo $(getword "$nouns")" "$(getword "$verbs")" "$(getword "$nouns") >> $thefile
   stupid=$(($RANDOM % 35))
-  [[ $stupid -eq 12 ]] && sed -i -r 's/ / :/g' README.py
-  [[ $stupid -eq 22 ]] && sed -i -r 's/i/a/g' README.py
-  [[ $stupid -eq 32 ]] && sed -i -r 's/e/uiuiui/g' README.py
-  git add randy.py >/dev/null 2>/dev/null
+  [[ $stupid -eq 12 ]] && sed -i -r 's/ / :/g' $thefile
+  [[ $stupid -eq 22 ]] && sed -i -r 's/i/a/g' $thefile
+  [[ $stupid -eq 32 ]] && sed -i -r 's/e/uiuiui/g' $thefile
+  git add $thefile >/dev/null 2>/dev/null
 }
 
 function makecommit() {
@@ -154,7 +155,7 @@ if [[ $1 == '--drudgery' ]] && [[ -d "$2" ]]; then
   cfg=$(cat "$configfile")
   # first commit needs to be made on a Sunday
   if [[ $(echo "$cfg" | cut -b 1) == '|' ]]; then
-    [[ $(date +%w) == 0 ]] || exit
+    #[[ $(date +%w) == 0 ]] || exit
     cfg=$(echo "$cfg" | cut -b 2-)
   fi
   todaysbyte=$(echo "$cfg" | cut -b 1)
