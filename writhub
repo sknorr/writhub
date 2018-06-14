@@ -8,6 +8,9 @@
 #6 .##.####..###.##.#.### #     ##  #### ##  #.# # # # #  #.##. ###..####  ##..## ###  #  # # #  #   #####   #   #
 #7                        #  .##.       #.                      #      #                           .#.           #
 
+me="$(test -L $(realpath $0) && readlink $(realpath $0) || echo $(realpath $0))"
+mydir="$(dirname $me)"
+
 level0=0
 level1=1
 level2=4
@@ -16,12 +19,12 @@ level4=12
 configfile="writhub.stringalong"
 spaces="       "
 
-verbs="empathize correct fix regurgitate grill decompose pry_open rescue raise decrease take speak go purge exit disrupt refactor resist instigate componentize cast immanentize flatten summarize segue mix manage mobilize massage cast peek besiege shovel make round_out decentralize revive invigorate snap ask comment break smash kill analyze average_out spin_off separate reset set_up cancel reveal chastise add fuzz shoot divest invest mark burn cook reheat microwave broaden debug funnel overload cut translate calculate chase flip_over chill offset charge replace merge plug include render import resuscitate reference refurbish distinguish extinguish crash run share mount prepopulate reconfigure falsify consume implement reclaim generate update bind specify provide"
-conjunctions="and with for by using via through over because_of due_to"
-articles="the a 1"
-pronouns="over in around"
-adjectives="awesome horrible terrific scientific fluctuating egotist masterly pressurized whimsical savage mutant minor major little feeble flimsy central random persistent ratchety pointy mechanical open-source helpless persnickety peppered pesky financial fiscal wobbly short wide sharp long transparent never-meant-to-be magical pseudo-random broken duck-typed manual interactive original angsty salted meandering mesmerizing phantasized flamboyant organic fresh correct hyperventilating hallucinated overbroad large shiny foreign spicy special annoying powerful scalable cellular hyper-convergent global local social non-trivial disk-backed simultaneous loose ephemeral external requested forever important recent smooth fake clear unmanaged dynamic independent 3rd-party community-maintained distinct specific read-only static real"
-nouns="footgun patch jelly kitten party style Wichita mango dream mezzanine container fire_engine drop ctor dtor function force_field spore spoof peanut PR earthquake Eschaton Feng_Shui bird_nest awareness DoS headless_chicken apologist typo message_bus hub validity regression mutex heap humanity Makefile machete null_pointer overlord code_drop signal technobabble Tijuana illuminati apple l10n unit_test ricochet gain Q1_result pinky_finger vernacular better_place world number digit hashtag Ruby_Gem package flood_gate stack_overflow buffer_underrun dict int static_typing syntactic_sugar command loop goto responsibility balloon memory_usage birthday_bash Instagram_pic fear magic_number interrupt flotsam jet_engine idea build_fix QA_tester salt elliptic_curve scooter insomnia override dash_of_cumin report template Apache result stuff scissors fire_ball lightning weather_report tornado protection Demagorgon f-society random_orange issue_reporter stacktrace traceback Visual_Studio_project_file GCC Warnings_as_Errors tendency order_of_magnitude felony compatibility jemalloc Valgrind gas_leak factory object series_of_pipes ampersand char abstraction_layer test_tube pencil mid-layer upper_floor middleware Mgmt SCSS_rule gold_farmer lootbox 3D_engine parameter clean_state Kubernetes_Pod kubelet image hard_link AWS Elastic_Beanstalk API_method EC2_instance zone compartment component ID merge_sort default plain-text tmpfs Btrfs table MySQL field hierarchy access_mode resource provisioning"
+verbs=$(cat $mydir/verbs)
+conjunctions=$(cat $mydir/conjunctions)
+articles=$(cat $mydir/articles)
+pronouns=$(cat $mydir/pronouns)
+adjectives=$(cat $mydir/adjectives)
+nouns=$(cat $mydir/nouns)
 
 function echsit() {
   echo "$1"
