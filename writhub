@@ -122,17 +122,7 @@ function commitmessage() {
   [[ $addnumber -eq 4 ]] && number=" (also fixes #${issue})"
   [[ $addnumber -eq 5 ]] && number=" (WIP)"
   if [[ $isrevert -eq 8 ]]; then
-    fakehash=
-    for i in $(seq 1 40); do
-      hashchar=$(($RANDOM % 16))
-      [[ "$hashchar" == '10' ]] && hashchar="a"
-      [[ "$hashchar" == '11' ]] && hashchar="b"
-      [[ "$hashchar" == '12' ]] && hashchar="c"
-      [[ "$hashchar" == '13' ]] && hashchar="d"
-      [[ "$hashchar" == '14' ]] && hashchar="e"
-      [[ "$hashchar" == '15' ]] && hashchar="f"
-      fakehash+="$hashchar"
-    done
+    fakehash=$(echo "$msg$number" | git hash-object --stdin)
     echo -e "Revert \"$(echo $msg$number | sed -r 's/^./\U&\L/')\"\n\nThis reverts commit $fakehash"
   else
     echo "$msg$number" | sed -r 's/^./\U&\L/'
