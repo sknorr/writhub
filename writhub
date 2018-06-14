@@ -132,10 +132,13 @@ function generatefiles() {
   thefile="randy.py"
   touch $thefile
   echo $(getword "$nouns")" "$(getword "$verbs")" "$(getword "$nouns") >> $thefile
-  stupid=$(($RANDOM % 35))
-  [[ $stupid -eq 12 ]] && sed -i -r 's/ / :/g' $thefile
-  [[ $stupid -eq 22 ]] && sed -i -r 's/i/a/g' $thefile
-  [[ $stupid -eq 32 ]] && sed -i -r 's/e/uiuiui/g' $thefile
+  stupid=$(($RANDOM % 70))
+  thefilelines=$(cat "thefile" | wc -l)
+  stupidline=$(($RANDOM % $thefilelines))
+  [[ $stupid -eq 12 ]] && sed -i -r "$stupidline s/ / :/g" $thefile
+  [[ $stupid -eq 22 ]] && sed -i -r "$stupidline s/i/a/g" $thefile
+  [[ $stupid -eq 32 ]] && sed -i -r "$stupidline s/e/uiuiui/g" $thefile
+  [[ $stupid -eq 42 ]] && sed -i -r "$stupidline s/w/hush hush/g" $thefile
   git add $thefile >/dev/null 2>/dev/null
 }
 
