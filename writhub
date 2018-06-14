@@ -1,12 +1,12 @@
 #!/bin/bash
-#0 a   |b  |c  |d   |e   |f |g  |h  |i |j|k  |l|m    |n   |o  |p   |q  |r |s |t |u  |v  |w   |x  |y  |z  |@     |1 |2  |3  |4  |5  |6  |7  |8  |9  |0  |#
-#1      #          #      .##    #   .# .##   #                                                                   # .##..##.  # ####  .##### ##..##. ##.#
-#2      #          #      #      #        #   #                               #                           .#. .#.## #  #.  # ## #   .# .   ##  ##  ##  ##
-#3 ###. ###..###.### .###.###.######..# .## .## #.#.#.#.## .##.#.##..#### #.#.## #  ##  ##   ##  ##. ####.####### #    #   ## # #   #     # #  ##  ## .##
-#4  .## #  ##   #  # # .# #  #  ##  # #  ###  #  # # # #  ##  # #  ##  ### #. #  #  ##  ## . # #.  # #  # ####.## #   #  .#.#######.###. #   ## .#### .##
-#5 #  # #  ##   #  # ##   #  .####  # #  ## # #  # # # #  ##  # #  ##  ##   ###  #  #.# ## # # ##.  ## #   #####  #  #     #  #    ##  ##   #  #   ##. ##
-#6 .##.####..###.##.#.### #     ##  #### ##  #.# # # # #  #.##. ###..####  ##..## ###  #  # # #  #   #####   #    # #      #  #    ##  ##   #  #  # #  ##
-#7                        #  .##.       #.                      #      #                           .#.           #######.##.  # .##..##.#   .##. #  .##.#
+#0 a   |b  |c  |d   |e   |f |g  |h  |i |j|k  |l|m    |n   |o  |p   |q  |r |s |t |u  |v  |w   |x  |y  |z  |@     |1 |2  |3  |4  |5  |6  |7  |8  |9  |0  |.|?  |!|- |*     |#
+#1      #          #      .##    #   .# .##   #                                                                   # .##..##.  # ####  .##### ##..##. ##.  .##.#    .#####.#
+#2      #          #      #      #        #   #                               #                           .#. .#.## #  #.  # ## #   .# .   ##  ##  ##  #     ##    #     ##
+#3 ###. ###..###.### .###.###.######..# .## .## #.#.#.#.## .##.#.##..#### #.#.## #  ##  ##   ##  ##. ####.####### #    #   ## # #   #     # #  ##  ## .#     ##    # # # ##
+#4  .## #  ##   #  # # .# #  #  ##  # #  ###  #  # # # #  ##  # #  ##  ### #. #  #  ##  ## . # #.  # #  # ####.## #   #  .#.#######.###. #   ## .#### .#   ## # ####     ##
+#5 #  # #  ##   #  # ##   #  .####  # #  ## # #  # # # #  ##  # #  ##  ##   ###  #  #.# ## # # ##.  ## #   #####  #  #     #  #    ##  ##   #  #   ##. #   #  #    # ### ##
+#6 .##.####..###.##.#.### #     ##  #### ##  #.# # # # #  #.##. ###..####  ##..## ###  #  # # #  #   #####   #    # #      #  #    ##  ##   #  #  # #  #           #     ##
+#7                        #  .##.       #.                      #      #                           .#.           #######.##.  # .##..##.#   .##. #  .##.#  #  #    .#####.#
 
 me="$(test -L $(realpath $0) && readlink $(realpath $0) || echo $(realpath $0))"
 mydir="$(dirname $me)"
@@ -41,10 +41,10 @@ function readfont() {
 
 function getchar() {
   # $1 - desiredchar
-  char=$(echo "$1" | cut -b 1 | sed -r 's/[^a-z0-9@]//')
-  [[ $char ]] || echsit "Character '$1' is unsupported. Duh."
-  relevant=$(echo "$index" | sed -r "s/^(0.*${char} *\|).*/\1/")
-  start=$(echo -n "$relevant" | sed -r "s/^(0.*${char}).*/\1/" | wc -c)
+  char=$(echo -n "$1" | sed -r 's/[^-.!?@*a-z0-9]//')
+  [[ "$char" ]] || echsit "Character '$1' is unsupported. Duh."
+  relevant=$(echo "$index" | sed -r "s/^(0.*[${char}] *\|).*/\1/")
+  start=$(echo -n "$relevant" | sed -r "s/^(0.*[${char}]).*/\1/" | wc -c)
   end=$(echo -n "$relevant" | wc -c)
   asciichar=
   for i in $(seq 1 7); do
@@ -63,18 +63,20 @@ function getchar() {
 function composestring() {
   # $1 string to ASCIIize
   textstring=
-  input="$1"
+  input=$(echo -n "$1" | sed -r 's/([A-Z])/\L\1/g')
+  output="$input"
   while [[ "$input" ]]; do
     this=$(echo "$input" | cut -b 1)
     if [[ "$this" == ' ' ]]; then
       textstring+="$spaces$spaces$spaces"
     else
-      textstring+="$(getchar $this)$spaces"
+      textstring+=$(getchar "$this")"$spaces"
       [[ $? -gt 0 ]] && echsit "Mere Peasant! You do not deserve a config file."
     fi
     input=$(echo "$input" | cut -b 2-)
   done
   echo "|$textstring" >> "$configfile"
+  echo -e "The following output string was added to $configfile:\n$output"
 }
 
 #--- Git functionality
@@ -145,8 +147,10 @@ function makecommit() {
 if [[ $1 == '--compose' ]] && [[ "$2" ]]; then
   readfont
   composestring "$2"
-  echo "$configfile" > .gitignore
-  git add .gitignore && git commit -m "Add gitignore"
+  if [[ ! -f '.gitignore' ]]; then
+    echo "$configfile" > .gitignore
+    git add .gitignore && git commit -m "Add gitignore"
+  fi
   echo "You done good, son. This'll last for "$(cat $configfile | wc -c)" days."
   exit
 fi
