@@ -166,7 +166,7 @@ if [[ $1 == '--drudgery' ]] && [[ -d "$2" ]]; then
     for i in [[ $(seq 1 $commits) ]]; do
       makecommit
     done
-    git push >/dev/null 2>/dev/null
+    [[ "$3" == '--no-push' ]] || git push >/dev/null 2>/dev/null
   fi
 
   echo "$cfg" | cut -b 2- > "$configfile"
