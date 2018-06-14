@@ -27,8 +27,8 @@ adjectives=$(cat $mydir/adjectives)
 nouns=$(cat $mydir/nouns)
 
 function echsit() {
-  echo "$1"
-  exit
+  >&2 echo "$1"
+  exit 1
 }
 
 # --- Get the string to type out
@@ -41,8 +41,8 @@ function readfont() {
 
 function getchar() {
   # $1 - desiredchar
-  char=$(echo "$1" | cut -b 1 | sed -r 's/[^a-z@]//')
-  [[ $char ]] || echsit "I cannot handle unhandled characters. Duh."
+  char=$(echo "$1" | cut -b 1 | sed -r 's/[^a-z0-9@]//')
+  [[ $char ]] || echsit "Character '$1' is unsupported. Duh."
   relevant=$(echo "$index" | sed -r "s/^(0.*${char} *\|).*/\1/")
   start=$(echo -n "$relevant" | sed -r "s/^(0.*${char}).*/\1/" | wc -c)
   end=$(echo -n "$relevant" | wc -c)
@@ -70,6 +70,7 @@ function composestring() {
       textstring+="$spaces$spaces$spaces"
     else
       textstring+="$(getchar $this)$spaces"
+      [[ $? -gt 0 ]] && echsit "Mere Peasant! You do not deserve a config file."
     fi
     input=$(echo "$input" | cut -b 2-)
   done
