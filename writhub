@@ -10,9 +10,9 @@
 
 level0=0
 level1=1
-level2=7
-level3=14
-level4=21
+level2=4
+level3=8
+level4=12
 configfile="writhub.stringalong"
 spaces="       "
 
