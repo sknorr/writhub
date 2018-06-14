@@ -108,9 +108,9 @@ function commitmessage() {
   elif [[ $commitstyle -eq 2 ]]; then
     msg=$(getword "$verbs")" and "$(getword "$verbs")" "$(getword "$adjectives")" "$(getword "$nouns")
   elif [[ $commitstyle -eq 3 ]]; then
-    msg=$(getword "$verbs")" "$(getword "$pronouns")" "$(getword "$adjectives")" "$(getword "$nouns")
+    msg=$(getword "$verbs")" "$(getword "$nouns")" "$(getword "$pronouns")" "$(getword "$adjectives")" "$(getword "$nouns")
   elif [[ $commitstyle -eq 4 ]]; then
-    msg=$(getword "$verbs")" "$(getword "$pronouns")" "$(camelcase)
+    msg=$(getword "$verbs")" "$(getword "$nouns")" "$(getword "$pronouns")" "$(camelcase)
   elif [[ $commitstyle -eq 5 ]]; then
     msg=$(getword "$verbs")" "$(getword "$adjectives")" "$(getword "$nouns")" "$(getword "$conjunctions")" "$(getword "$nouns")
   elif [[ $commitstyle -eq 6 ]]; then

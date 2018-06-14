@@ -1,6 +1,5 @@
 add
 analyze
-ask
 average_out
 besiege
 bind
@@ -38,7 +37,6 @@ flip
 funnel
 fuzz
 generate
-go
 grill
 immanentize
 implement
@@ -56,10 +54,12 @@ merge
 microwave
 mix
 mobilize
+monkeypatch
 mount
 offset
 overload
 peek
+placate
 plug
 prepopulate
 provide
@@ -83,6 +83,7 @@ reveal
 revive
 round_out
 run
+sanitize
 segue
 separate
 set_up
