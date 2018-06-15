@@ -1,12 +1,12 @@
 #!/bin/bash
-#0 a   |b  |c  |d   |e   |f |g  |h  |i |j|k  |l|m    |n   |o  |p   |q  |r |s |t |u  |v  |w   |x  |y  |z  |@     |1 |2  |3  |4  |5  |6  |7  |8  |9  |0  |.|?  |!|- |*     |#
-#1      #          #      .##    #   .# .##   #                                                                   # .##..##.  # ####  .##### ##..##. ##.  .##.#    .#####.#
-#2      #          #      #      #        #   #                               #                           .#. .#.## #  #.  # ## #   .# .   ##  ##  ##  #     ##    #     ##
-#3 ###. ###..###.### .###.###.######..# .## .## #.#.#.#.## .##.#.##..#### #.#.## #  ##  ##   ##  ##. ####.####### #    #   ## # #   #     # #  ##  ## .#     ##    # # # ##
-#4  .## #  ##   #  # # .# #  #  ##  # #  ###  #  # # # #  ##  # #  ##  ### #. #  #  ##  ## . # #.  # #  # ####.## #   #  .#.#######.###. #   ## .#### .#   ## # ####     ##
-#5 #  # #  ##   #  # ##   #  .####  # #  ## # #  # # # #  ##  # #  ##  ##   ###  #  #.# ## # # ##.  ## #   #####  #  #     #  #    ##  ##   #  #   ##. #   #  #    # ### ##
-#6 .##.####..###.##.#.### #     ##  #### ##  #.# # # # #  #.##. ###..####  ##..## ###  #  # # #  #   #####   #    # #      #  #    ##  ##   #  #  # #  #           #     ##
-#7                        #  .##.       #.                      #      #                           .#.           #######.##.  # .##..##.#   .##. #  .##.#  #  #    .#####.#
+#0 a   |b  |c  |d   |e   |f |g  |h  |i |j|k  |l|m    |n   |o  |p   |q  |r |s |t |u  |v  |w   |x  |y  |z  |@     |1 |2  |3  |4  |5  |6  |7  |8  |9  |0  |,|.|? |!|- |*     |#
+#1      #          #      .##    #    #  ##   #                                                                   # :##::##:  # #### .# ####.##::##:.##:    ##.#           #
+#2      #          #      #      #        #   #                               #                           .#: :#.## #  #   # ## #   .#     ##  ##  ##  #      ##     ::::: #
+#3 ###: ###::##::### :###:###:######:%# %## :## #:#:#:#.## .##:#:##::#### #.#:## #  ##  ##   ##  ##. ####:####### #    # :#:# # ###:###:   # ## #  ## :#     # #    :.#.#.:#
+#4  :## #  ##   #  # # :# #  #  ##  # #  ###  #  # # # #  ##  # #  ##  ### #. #  #  ##  ## : # #:  # #  # ####.## #   #    #####   ##  #  # #  #.##:#:.#    #. # ###:.....:#
+#5 #  # #  ##   #  # ##   #  :####  # #  ## # #  # # # #  ##  # #  ##  ##   ###  #  #.# ## # # ##.  ## #   #####  #  #     #  #    ##  # #  #  # #  #  #            :.###.:#
+#6 :##:####::###:##:#:### #     ##  #### ##  #.# # # # #  #:##: ###::####  ##::##.###  #  # # #  #   #####   #   #######:##:  # :##::##:#   :##:#   :##::## #  #     ::::: #
+#7                        #  :##:       #:                      #      #                           :#.                                                  #                  #
 
 me="$(test -L $(realpath $0) && readlink $(realpath $0) || echo $(realpath $0))"
 mydir="$(dirname $me)"
@@ -41,21 +41,17 @@ function readfont() {
 
 function getchar() {
   # $1 - desiredchar
-  char=$(echo -n "$1" | sed -r 's/[^-.!?@*a-z0-9]//')
+  char=$(echo -n "$1" | sed -r 's/[^-,.!?@*a-z0-9]//')
   [[ "$char" ]] || echsit "Character '$1' is unsupported. Duh."
   relevant=$(echo "$index" | sed -r "s/^(0.*[${char}] *\|).*/\1/")
   start=$(echo -n "$relevant" | sed -r "s/^(0.*[${char}]).*/\1/" | wc -c)
   end=$(echo -n "$relevant" | wc -c)
-  asciichar=
-  for i in $(seq 1 7); do
-    asciichar+=','$(echo -e "$font" | sed -n "${i} p" | cut -b ${start}-${end})
-  done
   asciivertical=
-  # $end - $start and cut instead maybe? then i could also leave away the stupid
-  # commas
-  while [[ $(echo "$asciichar" | sed 's/,//g') ]]; do
-    asciivertical+=$(echo "$asciichar" | sed -r -e 's/,([^,])[^,]*/\1/g')
-    asciichar=$(echo "$asciichar" | sed -r -e 's/(,)[^,]([^,]*)/\1\2/g')
+  for n in $(seq $start $end); do
+    for i in $(seq 1 7); do
+      [[ $i -eq 1 ]] && asciivertical+='|'
+      asciivertical+=$(echo -e "$font" | sed -n "${i} p" | cut -b ${n})
+    done
   done
   echo "$asciivertical"
 }
@@ -68,14 +64,14 @@ function composestring() {
   while [[ "$input" ]]; do
     this=$(echo "$input" | cut -b 1)
     if [[ "$this" == ' ' ]]; then
-      textstring+="$spaces$spaces$spaces"
+      textstring+="|$spaces|$spaces|$spaces"
     else
-      textstring+=$(getchar "$this")"$spaces"
+      textstring+=$(getchar "$this")"|$spaces"
       [[ $? -gt 0 ]] && echsit "Mere Peasant! You do not deserve a config file."
     fi
     input=$(echo "$input" | cut -b 2-)
   done
-  echo "|$textstring" >> "$configfile"
+  echo "$textstring" >> "$configfile"
   echo -e "The following output string was added to $configfile:\n$output"
 }
 
@@ -155,7 +151,7 @@ if [[ $1 == '--compose' ]] && [[ "$2" ]]; then
     echo "$configfile" > .gitignore
     git add .gitignore && git commit -m "Add gitignore"
   fi
-  echo "You done good, son. This'll last for "$(cat $configfile | wc -c)" days."
+  echo "You done good, son. This'll last for "$(cat $configfile | tr -d '|' | wc -c)" days."
   exit
 fi
 
@@ -164,7 +160,7 @@ if [[ $1 == '--drudgery' ]] && [[ -d "$2" ]]; then
 
   [[ -f "$configfile" ]] || echsit "Use --compose MESSAGE to create a configuration."
   [[ $(cat "$configfile") ]] || echsit "$configfile is empty. I declare victory."
-  cfg=$(cat "$configfile")
+  cfg=$(cat "$configfile" | tr -d '\n')
   # first commit needs to be made on a Sunday
   if [[ $(echo "$cfg" | cut -b 1) == '|' ]]; then
     [[ $(date +%w) == 0 ]] || exit
@@ -172,7 +168,9 @@ if [[ $1 == '--drudgery' ]] && [[ -d "$2" ]]; then
   fi
   todaysbyte=$(echo "$cfg" | cut -b 1)
   commits=0
-  [[ $todaysbyte = '.' ]] && commits="$level2"
+  [[ $todaysbyte = '.' ]] && commits="$level1"
+  [[ $todaysbyte = ':' ]] && commits="$level2"
+  [[ $todaysbyte = '%' ]] && commits="$level3"
   [[ $todaysbyte = '#' ]] && commits="$level4"
   if [[ ! $commits -eq 0 ]]; then
     for i in [[ $(seq 1 $commits) ]]; do
